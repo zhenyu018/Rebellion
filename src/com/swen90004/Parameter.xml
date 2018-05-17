@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<Parameters>
+    <numberofPatches value="200"></numberofPatches>
+    <governmentLegitimacy value="0.1"></governmentLegitimacy>
+    <maxJailTerm value="30"></maxJailTerm>
+    <movement value="true"></movement>
+    <vision value="7"></vision>
+    <numberOfAgents value="100"></numberOfAgents>
+    <numberofCops value="100"></numberofCops>
+</Parameters>
