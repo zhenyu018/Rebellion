@@ -6,6 +6,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Simulator {
@@ -16,10 +18,8 @@ public class Simulator {
     private int activeAgents;
     private int peopleInJail;
     private int quietAgents;
-    private double governmentLegitymacy;
     private Agent[] agents;
     private Cop[] cops;
-    private int pid;
 
     public int getActiveAgents() {
         return activeAgents;
@@ -42,7 +42,6 @@ public class Simulator {
             numberOfPatches = handler.getNumberOfPatches();
             numberOfAgents = handler.getNumberOfAgents();
             numberOfCops = handler.getNumberOfCops();
-            pid = 0;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
@@ -50,7 +49,6 @@ public class Simulator {
         for(int i = 0; i < patches.length; i ++){
             for(int j = 0; j < patches[i].length; j ++){
                 patches[i][j] = new Patch(i,j);
-                //logger.info("generated x = " + i + "y = " + j);
             }
         }
 
@@ -74,6 +72,9 @@ public class Simulator {
             movePeople(agents);
             movePeople(cops);
 
+        Collections.shuffle(Arrays.asList(agents));
+        Collections.shuffle(Arrays.asList(cops));
+
             // A rule
             for (Agent agent : agents) {
                 if (agent.getRemainJailTerm() == 0) {
@@ -87,7 +88,9 @@ public class Simulator {
             }
             //Reduce the jail term of jailed agents.
             for (Agent agent : agents) {
-                if (agent.getRemainJailTerm() > 0) agent.manageJailTerm(-1);
+                if (agent.getRemainJailTerm() > 0){
+                    agent.manageJailTerm(-1);
+                }
             }
 
 
@@ -97,7 +100,6 @@ public class Simulator {
 
         Patch availablePatch = findAvailablePatch();
         Agent agent= new Agent(availablePatch, false);
-        pid++;
         availablePatch.addPerson(agent);
         return agent;
     }
@@ -106,7 +108,6 @@ public class Simulator {
 
         Patch availablePatch = findAvailablePatch();
         Cop cop= new Cop(availablePatch);
-        pid++;
         availablePatch.addPerson(cop);
         return cop;
     }
@@ -141,7 +142,7 @@ public class Simulator {
     public void agentStatistic(){
         for(Agent agent : agents){
             if(agent.isActive()){
-                activeAgents ++;
+                activeAgents++;
             }
             if (agent.getRemainJailTerm() > 0){
                 peopleInJail++;
@@ -155,21 +156,20 @@ public class Simulator {
      * Reset the count of agents.
      */
     public void reset(){
-        activeAgents = 0;
-        peopleInJail = 0;
-        quietAgents = 0;
+        this.activeAgents = 0;
+        this.peopleInJail = 0;
+        this.quietAgents = 0;
     }
 
-    public void printPatch(){
-        for (int i = 0; i < patches.length; i++){
-            for (Patch patch : patches[i]){
-                for (Person person : patch.getPeople()){
-                    if (person instanceof Cop){
+    /*public void printPatch(){
+        for (Patch[] patche : patches) {
+            for (Patch patch : patche) {
+                for (Person person : patch.getPeople()) {
+                    if (person instanceof Cop) {
                         System.out.print("C,");
-                    }else
-                    if (person instanceof Agent){
+                    } else if (person instanceof Agent) {
                         System.out.print("A,");
-                    }else{
+                    } else {
                         System.out.print(" ,");
                     }
                 }
@@ -178,6 +178,6 @@ public class Simulator {
             System.out.println();
         }
 
-    }
+    }*/
 
 }

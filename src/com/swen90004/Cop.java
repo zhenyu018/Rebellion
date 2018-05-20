@@ -15,7 +15,7 @@ public class Cop extends Person {
         if(counts[1]!=0){
             for(Patch patch : getPosition().getVisionPatch()){
                 for(Person person : this.getPosition().getPeople()){
-                    if (person instanceof Agent && ((Agent) person).isActive()){
+                    if (((Agent) person).isActive()){
                         tempPatches.add(patch);
                     }
                 }

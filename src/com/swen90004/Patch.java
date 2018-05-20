@@ -42,7 +42,7 @@ public class Patch {
 
     }
 
-    public Patch GetPatch(int x, int y) {
+    private Patch GetPatch(int x, int y) {
         return Simulator.patches[Math.abs(x % numberOfPatches)]
                     [Math.abs(y % numberOfPatches)];
     }

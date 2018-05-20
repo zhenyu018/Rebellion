@@ -89,10 +89,10 @@ public class Agent extends Person {
 
     public void manageJailTerm(int term){
         if (term > 0){
-            remainJailTerm = ThreadLocalRandom.current().nextInt(1,maxJailTerm+1);
+            this.remainJailTerm = ThreadLocalRandom.current().nextInt(1,maxJailTerm+1);
         }else {
             if (term < 0){
-                remainJailTerm--;
+                this.remainJailTerm--;
             }
         }
     }
