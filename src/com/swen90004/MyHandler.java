@@ -4,7 +4,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class XMLParser extends DefaultHandler {
+public class MyHandler extends DefaultHandler {
 
     public int getNumberOfPatches() {
         return numberOfPatches;
@@ -34,6 +34,14 @@ public class XMLParser extends DefaultHandler {
         return numberOfCops;
     }
 
+    public double getK() {
+        return k;
+    }
+
+    public double getThreshold() {
+        return threshold;
+    }
+
     private int numberOfAgents;
     private int numberOfCops;
     private int numberOfPatches;
@@ -41,6 +49,8 @@ public class XMLParser extends DefaultHandler {
     private int maxJailTerm;
     private boolean movement;
     private int vision;
+    private double k;
+    private double threshold;
 
 
     @Override
@@ -50,18 +60,31 @@ public class XMLParser extends DefaultHandler {
         switch (qName){
             case "numberofPatches":
                 numberOfPatches = Integer.parseInt(attributes.getValue("value"));
+                break;
             case "governmentLegitimacy":
                 governmentLegitimacy = Double.parseDouble(attributes.getValue("value"));
+                break;
             case "maxJailTerm":
                 maxJailTerm = Integer.parseInt(attributes.getValue("value"));
+                break;
             case "movement":
                 movement = Boolean.valueOf(attributes.getValue("value"));
+                break;
             case "vision":
                 vision = Integer.parseInt(attributes.getValue("value"));
+                break;
             case "numberOfAgents":
                 numberOfAgents = Integer.parseInt(attributes.getValue("value"));
+                break;
             case "numberOfCops":
                 numberOfCops = Integer.parseInt(attributes.getValue("value"));
+                break;
+            case "k":
+                k = Double.parseDouble(attributes.getValue("value"));
+                break;
+            case "threshold":
+                threshold = Double.parseDouble(attributes.getValue("value"));
+                break;
             default:
                 break;
         }

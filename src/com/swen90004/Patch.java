@@ -1,11 +1,7 @@
 package com.swen90004;
 
-import com.sun.org.apache.xml.internal.resolver.readers.SAXParserHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -27,15 +23,17 @@ public class Patch {
     private ArrayList<Person> people;
     private int numberOfPatches;
     private int vision;
+
     public Patch(int x, int y){
         this.locationX = x;
         this.locationY = y;
         this.isOccupied = false;
+        people = new ArrayList<>();
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
             SAXParser parser = factory.newSAXParser();
-            XMLParser handler = new XMLParser();
-            parser.parse("Parameter.xml", handler);
+            MyHandler handler = new MyHandler();
+            parser.parse("src/com/swen90004/Parameter.xml", handler);
             numberOfPatches = handler.getNumberOfPatches();
             vision = handler.getVision();
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -45,20 +43,25 @@ public class Patch {
     }
 
     public Patch GetPatch(int x, int y) {
-        return Simulator.patches[ (x + numberOfPatches) % numberOfPatches]
-                    [(y + numberOfPatches) % numberOfPatches];
+        return Simulator.patches[Math.abs(x % numberOfPatches)]
+                    [Math.abs(y % numberOfPatches)];
     }
 
     public boolean isOccupied(){
-        //if there is no one in this patch, return true
-        if(people == null) return true;
 
-        //if the only person in this patch is jailed, then this patch is not occupied
+        isOccupied = false;
+        //if there is no one in this patch, return false
+        if(people == null){
+            return isOccupied;
+        }
+
         for(Person person : this.people){
             if(person instanceof Cop || person instanceof Agent &&
-                    ((Agent)person).getRemainJailTerm()==0) return false;
+                    ((Agent)person).getRemainJailTerm() == 0){
+                isOccupied = true;
+            }
         }
-        return true;
+        return isOccupied;
     }
 
     public void setOccupied(boolean occupied) {
@@ -84,8 +87,7 @@ public class Patch {
             visionPatches.add(GetPatch(locationX, locationY - y));
         }
         for (int x = 1; x <=vision; x++) {
-            int sq = (int) Math.sqrt(vision * vision - x *
-                    x);
+            int sq = (int) Math.sqrt(vision * vision - x * x);
             visionPatches.add(GetPatch(locationX + x, locationY));
             visionPatches.add(GetPatch(locationX - x, locationY));
 
@@ -96,7 +98,7 @@ public class Patch {
                 visionPatches.add(GetPatch(locationX - x, locationY - y));
             }
         }
-        visionPatches.add(this);
+        visionPatches.add(GetPatch(locationX, locationY));
 
         return visionPatches;
     }

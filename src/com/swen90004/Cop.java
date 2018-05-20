@@ -5,8 +5,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Cop extends Person {
 
-    public Cop(int pid, Patch patch){
-        super(pid, patch);
+    public Cop(Patch patch){
+        super(patch);
     }
 
     public void arrest(){
@@ -27,8 +27,6 @@ public class Cop extends Person {
 
             //send the suspect to jail on that patch
             Simulator.patches[randPatchX][randPatchY].getActiveAgent().beArrested();
-
-            //move this cop to that patch
 
             Simulator.patches[this.getPosition().getLocationX()][this.getPosition().getLocationY()].deletePerson(this);
             Simulator.patches[randPatchX][randPatchY].addPerson(this);

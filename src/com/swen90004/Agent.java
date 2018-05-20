@@ -18,22 +18,31 @@ public class Agent extends Person {
     private double perceivedHardship;
     private double governmentLegitimacy;
     private int maxJailTerm;
+    private double k;
+    private double threshold;
 
-    public Agent(int pid, Patch patch, boolean isActive) {
-        super(pid, patch);
+    public Agent(Patch patch, boolean isActive) {
+        super(patch);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
             SAXParser parser = factory.newSAXParser();
-            XMLParser handler = new XMLParser();
-            parser.parse("Parameter.xml", handler);
+            MyHandler handler = new MyHandler();
+            parser.parse("src/com/swen90004/Parameter.xml", handler);
             governmentLegitimacy = handler.getGovernmentLegitimacy();
             maxJailTerm = handler.getMaxJailTerm();
+            k = handler.getK();
+            threshold = handler.getThreshold();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
         this.isActive = isActive;
-        this.riskAversion = ThreadLocalRandom.current().nextDouble();
-        this.perceivedHardship = ThreadLocalRandom.current().nextDouble();
+        while(this.riskAversion == (double)0){
+            this.riskAversion = ThreadLocalRandom.current().nextDouble(0,1);
+        }
+        while (this.perceivedHardship == (double)0){
+            this.perceivedHardship = ThreadLocalRandom.current().nextDouble(0,1);
+        }
+
     }
 
     public double calculateGrievance() {
@@ -42,13 +51,12 @@ public class Agent extends Person {
 
     public double calculateArrestProbability() {
         int[] counts = getPosition().countNeighbours();
-        return 1 - Math.exp(-Configuration.ARREST_FACTOR *
-                (counts[0] / (1 + counts[1])));
+        return 1 - Math.exp(-k * Math.floor((double)counts[0] / (double) (1 + counts[1])));
     }
 
-    public boolean judgeActive() {
+    public void judgeActive() {
         if (calculateGrievance() - (this.riskAversion * calculateArrestProbability())
-                > Configuration.REBEL_THRESHOLD) {
+                > threshold) {
             this.isActive = true;
         } else this.isActive = false;
     }
@@ -80,10 +88,9 @@ public class Agent extends Person {
     }
 
     public void manageJailTerm(int term){
-        if (term > maxJailTerm){
-            remainJailTerm = ThreadLocalRandom.current().nextInt(0,maxJailTerm+1);
+        if (term > 0){
+            remainJailTerm = ThreadLocalRandom.current().nextInt(1,maxJailTerm+1);
         }else {
-            remainJailTerm = term;
             if (term < 0){
                 remainJailTerm--;
             }
@@ -91,7 +98,8 @@ public class Agent extends Person {
     }
 
     public void  beArrested(){
-        manageJailTerm(ThreadLocalRandom.current().nextInt(0,maxJailTerm+1));
+        manageJailTerm(1);
+        setActive(false);
     }
 
 }

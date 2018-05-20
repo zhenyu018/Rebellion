@@ -2,11 +2,13 @@
 
 
 <Parameters>
-    <numberofPatches value="200"></numberofPatches>
-    <governmentLegitimacy value="0.1"></governmentLegitimacy>
+    <numberofPatches value="400"></numberofPatches>
+    <governmentLegitimacy value="0.7"></governmentLegitimacy>
     <maxJailTerm value="30"></maxJailTerm>
     <movement value="true"></movement>
     <vision value="7"></vision>
-    <numberOfAgents value="100"></numberOfAgents>
-    <numberofCops value="100"></numberofCops>
+    <numberOfAgents value="1120"></numberOfAgents>
+    <numberofCops value="64"></numberofCops>
+    <k value="2.3"></k>
+    <threshold value="0.1"></threshold>
 </Parameters>
