@@ -21,8 +21,8 @@ public class Agent extends Person {
     private double k;
     private double threshold;
 
-    public Agent(Patch patch, boolean isActive) {
-        super(patch);
+    public Agent(int pid, Patch patch, boolean isActive) {
+        super(pid, patch);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
             SAXParser parser = factory.newSAXParser();
@@ -36,13 +36,8 @@ public class Agent extends Person {
             e.printStackTrace();
         }
         this.isActive = isActive;
-        while(this.riskAversion == (double)0){
-            this.riskAversion = ThreadLocalRandom.current().nextDouble(0,1);
-        }
-        while (this.perceivedHardship == (double)0){
-            this.perceivedHardship = ThreadLocalRandom.current().nextDouble(0,1);
-        }
-
+        this.riskAversion = ThreadLocalRandom.current().nextDouble(0,1);
+        this.perceivedHardship = ThreadLocalRandom.current().nextDouble(0,1);
     }
 
     public double calculateGrievance() {
@@ -87,19 +82,14 @@ public class Agent extends Person {
         return remainJailTerm;
     }
 
-    public void manageJailTerm(int term){
-        if (term > 0){
-            this.remainJailTerm = ThreadLocalRandom.current().nextInt(1,maxJailTerm+1);
-        }else {
-            if (term < 0){
-                this.remainJailTerm--;
-            }
-        }
+    public void reduceJailTerm(){
+        this.remainJailTerm--;
     }
 
     public void  beArrested(){
-        manageJailTerm(1);
-        setActive(false);
+        this.isActive = false;
+        this.remainJailTerm = ThreadLocalRandom.current().nextInt(1, maxJailTerm+1);
+
     }
 
 }

@@ -42,26 +42,21 @@ public class Patch {
 
     }
 
-    private Patch GetPatch(int x, int y) {
-        return Simulator.patches[Math.abs(x % numberOfPatches)]
-                    [Math.abs(y % numberOfPatches)];
+    public Patch GetPatch(int x, int y) {
+        return Simulator.patches[ (x + numberOfPatches) % numberOfPatches]
+                    [(y + numberOfPatches) % numberOfPatches];
     }
 
     public boolean isOccupied(){
+        //if there is no one in this patch, return true
+        if(people == null) return true;
 
-        isOccupied = false;
-        //if there is no one in this patch, return false
-        if(people == null){
-            return isOccupied;
-        }
-
+        //if the only person in this patch is jailed, then this patch is not occupied
         for(Person person : this.people){
             if(person instanceof Cop || person instanceof Agent &&
-                    ((Agent)person).getRemainJailTerm() == 0){
-                isOccupied = true;
-            }
+                    ((Agent)person).getRemainJailTerm()==0) return false;
         }
-        return isOccupied;
+        return true;
     }
 
     public void setOccupied(boolean occupied) {
@@ -87,7 +82,8 @@ public class Patch {
             visionPatches.add(GetPatch(locationX, locationY - y));
         }
         for (int x = 1; x <=vision; x++) {
-            int sq = (int) Math.sqrt(vision * vision - x * x);
+            int sq = (int) Math.sqrt(vision * vision - x *
+                    x);
             visionPatches.add(GetPatch(locationX + x, locationY));
             visionPatches.add(GetPatch(locationX - x, locationY));
 
@@ -98,7 +94,7 @@ public class Patch {
                 visionPatches.add(GetPatch(locationX - x, locationY - y));
             }
         }
-        visionPatches.add(GetPatch(locationX, locationY));
+        visionPatches.add(this);
 
         return visionPatches;
     }
@@ -107,7 +103,7 @@ public class Patch {
         int cops = 0;
         int activeAgents= 0;
         for(Patch patch : getVisionPatch()){
-            for (Person person: this.people){
+            for (Person person: patch.getPeople()){
                 if (person instanceof Cop){
                     cops++;
                 }
@@ -115,7 +111,9 @@ public class Patch {
                     activeAgents++;
                 }
             }
+
         }
+
         return new int[]{cops,activeAgents};
     }
 

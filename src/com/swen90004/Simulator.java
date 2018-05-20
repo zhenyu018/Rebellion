@@ -17,8 +17,8 @@ public class Simulator {
     private int peopleInJail;
     private int quietAgents;
     private double governmentLegitymacy;
-    private Agent[] agents;
-    private Cop[] cops;
+    public static Agent[] agents;
+    public static Cop[] cops;
     private int pid;
 
     public int getActiveAgents() {
@@ -89,7 +89,7 @@ public class Simulator {
             }
             //Reduce the jail term of jailed agents.
             for (Agent agent : agents) {
-                if (agent.getRemainJailTerm() > 0) agent.manageJailTerm(-1);
+                if (agent.getRemainJailTerm() > 0) agent.reduceJailTerm();
             }
 
 
