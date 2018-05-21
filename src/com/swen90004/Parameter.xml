@@ -11,4 +11,6 @@
     <numberOfCops value="64"></numberOfCops>
     <k value="2.3"></k>
     <threshold value="0.1"></threshold>
+    <extension value="true"></extension>
+    <f value="0.2"></f>
 </Parameters>

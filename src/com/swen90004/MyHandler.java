@@ -3,7 +3,9 @@ package com.swen90004;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
+/**
+* The MyHandler is used to read parameters from Parameter.xml file
+*/
 public class MyHandler extends DefaultHandler {
 
     public int getNumberOfPatches() {
@@ -42,6 +44,14 @@ public class MyHandler extends DefaultHandler {
         return threshold;
     }
 
+    public double getF() {
+        return f;
+    }
+
+    public boolean isExtension() {
+        return extension;
+    }
+
     private int numberOfAgents;
     private int numberOfCops;
     private int numberOfPatches;
@@ -51,12 +61,15 @@ public class MyHandler extends DefaultHandler {
     private int vision;
     private double k;
     private double threshold;
+    private double f;
+    private boolean extension;
 
 
     @Override
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
         super.startElement(uri, localName, qName, attributes);
+        // assign values read from Prameter.xml to the corresponding variables.
         switch (qName){
             case "numberofPatches":
                 numberOfPatches = Integer.parseInt(attributes.getValue("value"));
@@ -84,6 +97,12 @@ public class MyHandler extends DefaultHandler {
                 break;
             case "threshold":
                 threshold = Double.parseDouble(attributes.getValue("value"));
+                break;
+            case "f":
+                f = Double.parseDouble(attributes.getValue("value"));
+                break;
+            case "extension":
+                extension = Boolean.valueOf(attributes.getValue("value"));
                 break;
             default:
                 break;

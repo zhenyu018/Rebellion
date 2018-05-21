@@ -7,7 +7,11 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.ArrayList;
-
+/**
+* Patch class has an attribute which is the person in the patch
+* It can return a list of neighbour patches
+* It can count the statics of agents in neighbourhood
+*/
 public class Patch {
     public int getLocationX() {
         return locationX;
@@ -42,25 +46,32 @@ public class Patch {
 
     }
 
+
     public Patch GetPatch(int x, int y) {
         return Simulator.patches[ (x + numberOfPatches) % numberOfPatches]
                     [(y + numberOfPatches) % numberOfPatches];
     }
 
+    // judge this patch is occupied or not
     public boolean isOccupied(){
-        //if there is no one in this patch, return true
-        if(people == null) return true;
 
-        //if the only person in this patch is jailed, then this patch is not occupied
+        // no one in the patch -> unoccupied
+        if(people == null){
+            isOccupied = false;
+
+        }
+        // the patch is unoccupied until someone is found
+        isOccupied = false;
+
+        //an agent or a cop in the patch -> patch is occupied
         for(Person person : this.people){
             if(person instanceof Cop || person instanceof Agent &&
-                    ((Agent)person).getRemainJailTerm()==0) return false;
+                    ((Agent)person).getRemainJailTerm()==0){
+                isOccupied = true;
+            }
         }
-        return true;
-    }
 
-    public void setOccupied(boolean occupied) {
-        isOccupied = occupied;
+        return isOccupied;
     }
 
     public ArrayList<Person> getPeople() {
@@ -75,8 +86,10 @@ public class Patch {
         this.people.remove(person);
     }
 
+    // return a list of patches in the vision of this patch
     public ArrayList<Patch> getVisionPatch(){
         ArrayList<Patch> visionPatches = new ArrayList<>();
+        // add patches according to their coordinates
         for (int y = 1; y <= vision; y++) {
             visionPatches.add(GetPatch(locationX, locationY + y));
             visionPatches.add(GetPatch(locationX, locationY - y));
@@ -100,8 +113,11 @@ public class Patch {
     }
 
     public int[] countNeighbours(){
+        // number of cops in the neighbourhood
         int cops = 0;
+        // number of active agents in the neighbourhood
         int activeAgents= 0;
+
         for(Patch patch : getVisionPatch()){
             for (Person person: patch.getPeople()){
                 if (person instanceof Cop){
@@ -125,6 +141,7 @@ public class Patch {
         return null;
     }
 
+    // return an active agent in this patch if it exists
     public Agent getActiveAgent(){
         for(Person person : people){
             if(person instanceof Agent && ((Agent) person).isActive())

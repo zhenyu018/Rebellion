@@ -8,7 +8,13 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+* The simulator contains a map of all the patches
+* and arrays of cops and agents
+* It can also count the number of agents in different status
+*/
 public class Simulator {
+
     public static Patch[][] patches;
     private int numberOfPatches;
     private int numberOfCops;
@@ -16,10 +22,8 @@ public class Simulator {
     private int activeAgents;
     private int peopleInJail;
     private int quietAgents;
-    private double governmentLegitymacy;
     public static Agent[] agents;
     public static Cop[] cops;
-    private int pid;
 
     public int getActiveAgents() {
         return activeAgents;
@@ -33,6 +37,7 @@ public class Simulator {
         return quietAgents;
     }
 
+    // initialize and read parameters
     public void init(){
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
@@ -42,15 +47,15 @@ public class Simulator {
             numberOfPatches = handler.getNumberOfPatches();
             numberOfAgents = handler.getNumberOfAgents();
             numberOfCops = handler.getNumberOfCops();
-            pid = 0;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
+
+        //generate all the patches
         patches = new Patch[numberOfPatches][numberOfPatches];
         for(int i = 0; i < patches.length; i ++){
             for(int j = 0; j < patches[i].length; j ++){
                 patches[i][j] = new Patch(i,j);
-                //logger.info("generated x = " + i + "y = " + j);
             }
         }
 
@@ -60,21 +65,18 @@ public class Simulator {
             agents[k] = generateAgent();
         }
 
-
         cops = new Cop[numberOfCops];
         for(int k = 0; k < numberOfCops; k ++){
             cops[k] = generateCop();
         }
     }
 
+    // go one tick
     public void go() throws IOException {
-
 
             // M rule
             movePeople(agents);
             movePeople(cops);
-
-
 
             // A rule
             for (Agent agent : agents) {
@@ -87,52 +89,55 @@ public class Simulator {
             for (Cop cop : cops) {
                 cop.arrest();
             }
+
             //Reduce the jail term of jailed agents.
             for (Agent agent : agents) {
                 if (agent.getRemainJailTerm() > 0) agent.reduceJailTerm();
             }
-
-
-
-
-
     }
+
+    // generate agent and put it to an available patch
+    // and set agent to quiet
     public Agent generateAgent(){
 
         Patch availablePatch = findAvailablePatch();
-        Agent agent= new Agent(pid, availablePatch, false);
-        pid++;
+        Agent agent= new Agent(availablePatch, false);
         availablePatch.addPerson(agent);
         return agent;
     }
 
+    // generate cop and put it to an available patch
     public Cop generateCop(){
 
         Patch availablePatch = findAvailablePatch();
-        Cop cop= new Cop(pid, availablePatch);
-        pid++;
+        Cop cop= new Cop(availablePatch);
         availablePatch.addPerson(cop);
         return cop;
     }
 
+    // find an available patch for new agent or cop
     public Patch findAvailablePatch(){
 
-        Patch patch;
-
+        Patch availablePatch;
+        // go through all the patch randomly until find an an available one
         while(true) {
-            patch = patches[ThreadLocalRandom.current().nextInt(0,numberOfPatches)]
+            availablePatch = patches[ThreadLocalRandom.current().nextInt(0,numberOfPatches)]
                     [ThreadLocalRandom.current().nextInt(0,numberOfPatches)];
-            if(patch.getPeople().size() == 0) break;
+            if(availablePatch.getPeople().size() == 0) break;
         }
 
-        return patch;
+        return availablePatch;
     }
 
+
     private void movePeople(Person[] people){
+
         for (Person person: people){
+            // cops can move freely
             if (person instanceof Cop){
                 person.move();
             }
+            // move only when agents are not in jail
             if (person instanceof Agent && ((Agent) person).getRemainJailTerm() == 0){
                 person.move();
             }
@@ -140,34 +145,29 @@ public class Simulator {
         }
     }
 
+    // count all the agents
     public void agentStatistic(){
+
         for(Agent agent : agents){
             if(agent.isActive()){
+                // count active ones
                 activeAgents ++;
             }
             if (agent.getRemainJailTerm() > 0){
+                // count the ones in jail
                 peopleInJail++;
             }
         }
+        // calculate how many left, and they are quiet agents
         quietAgents = agents.length - activeAgents - peopleInJail;
 
     }
 
-    /**
-     * Reset the count of agents.
-     */
+    // reset counters
     public void reset(){
         activeAgents = 0;
         peopleInJail = 0;
-    }
-
-    public void printPatch(){
-        for (int i = 0; i < patches.length; i++){
-            for (Patch patch : patches[i]){
-
-            }
-        }
-
+        quietAgents = 0;
     }
 
 }
