@@ -45,8 +45,11 @@ public class Simulator {
             MyHandler handler = new MyHandler();
             parser.parse("src/com/swen90004/Parameter.xml", handler);
             numberOfPatches = handler.getNumberOfPatches();
-            numberOfAgents = handler.getNumberOfAgents();
-            numberOfCops = handler.getNumberOfCops();
+            // read the percentage of agents and cops, and calculate the exact numbers
+            numberOfAgents = (int) Math.floor(handler.getPercentageOfAgents()
+                    * numberOfPatches * numberOfPatches);
+            numberOfCops = (int) Math.floor(handler.getPercentageOfCops()
+                    * numberOfPatches * numberOfPatches);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }

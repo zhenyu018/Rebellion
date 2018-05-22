@@ -3,14 +3,14 @@
 
 <Parameters>
     <numberofPatches value="40"></numberofPatches>
-    <governmentLegitimacy value="0.7"></governmentLegitimacy>
+    <governmentLegitimacy value="0.82"></governmentLegitimacy>
     <maxJailTerm value="30"></maxJailTerm>
     <movement value="true"></movement>
     <vision value="7"></vision>
-    <numberOfAgents value="1120"></numberOfAgents>
-    <numberOfCops value="64"></numberOfCops>
+    <percentageOfAgents value="0.7"></percentageOfAgents>
+    <percentageOfCops value="0.04"></percentageOfCops>
     <k value="2.3"></k>
     <threshold value="0.1"></threshold>
     <extension value="true"></extension>
-    <f value="0.2"></f>
+    <f value="0.5"></f>
 </Parameters>

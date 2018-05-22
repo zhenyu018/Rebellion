@@ -28,14 +28,6 @@ public class MyHandler extends DefaultHandler {
         return vision;
     }
 
-    public int getNumberOfAgents() {
-        return numberOfAgents;
-    }
-
-    public int getNumberOfCops() {
-        return numberOfCops;
-    }
-
     public double getK() {
         return k;
     }
@@ -52,8 +44,16 @@ public class MyHandler extends DefaultHandler {
         return extension;
     }
 
-    private int numberOfAgents;
-    private int numberOfCops;
+    public double getPercentageOfAgents() {
+        return percentageOfAgents;
+    }
+
+    public double getPercentageOfCops() {
+        return percentageOfCops;
+    }
+
+    private double percentageOfAgents;
+    private double percentageOfCops;
     private int numberOfPatches;
     private double governmentLegitimacy;
     private int maxJailTerm;
@@ -86,11 +86,11 @@ public class MyHandler extends DefaultHandler {
             case "vision":
                 vision = Integer.parseInt(attributes.getValue("value"));
                 break;
-            case "numberOfAgents":
-                numberOfAgents = Integer.parseInt(attributes.getValue("value"));
+            case "percentageOfAgents":
+                percentageOfAgents = Double.parseDouble(attributes.getValue("value"));
                 break;
-            case "numberOfCops":
-                numberOfCops = Integer.parseInt(attributes.getValue("value"));
+            case "percentageOfCops":
+                percentageOfCops = Double.parseDouble(attributes.getValue("value"));
                 break;
             case "k":
                 k = Double.parseDouble(attributes.getValue("value"));
@@ -107,6 +107,10 @@ public class MyHandler extends DefaultHandler {
             default:
                 break;
         }
+    }
+    @Override
+    public void endDocument(){
+
     }
 
 
